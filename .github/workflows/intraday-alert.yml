@@ -1,0 +1,27 @@
+import zipfile, os
+
+base = r'C:\Users\lu\pi-cwd-20260527\novels\short\头条文章'
+d = os.path.join(base, 'OpenAI-IPO-SpaceX-IPO-Anthropic-IPO')
+
+for f in os.listdir(d):
+    if f.endswith('.docx'):
+        fp = os.path.join(d, f)
+        z = zipfile.ZipFile(fp)
+        doc = z.read('word/document.xml').decode('utf-8', errors='replace')
+        print('=== 前500字符 ===')
+        print(doc[:500])
+        print('\n=== 最后300字符 ===')
+        print(doc[-300:])
+        
+        # 检查 body 标签完整性
+        has_body_open = '<w:body>' in doc
+        has_body_close = '</w:body>' in doc
+        has_doc_open = '<w:document' in doc
+        has_doc_close = '</w:document>' in doc
+        print(f'\n<body_open:{has_body_open}, </body_close:{has_body_close}>')
+        print(f'<doc_open:{has_doc_open}, </doc_close:{has_doc_close}>')
+        
+        # 检查 sectPr
+        has_sectpr = '<w:sectPr>' in doc
+        print(f'<sectPr: {has_sectpr}>')
+        z.close()
